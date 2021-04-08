@@ -50,6 +50,8 @@ namespace TimeTrackerLibrary.Data
         /// <param name="project">The Project to update</param>
         Task UpdateProject(ProjectModel project);
 
+        Task<ProjectModel> LoadProject(int id);
+
         /// <summary>
         /// Load all projects from the database
         /// </summary>

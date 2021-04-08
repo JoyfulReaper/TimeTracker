@@ -35,6 +35,127 @@ namespace TimeTrackerTests.Data
 
             int id = await projectData.AddProject(project);
             Assert.True(id > 0);
+
+            var dbProject = await projectData.LoadProject(id);
+            Assert.NotNull(dbProject);
+            Assert.Equal("Add Project", dbProject.Name);
+            Assert.Equal(id, dbProject.Id);
+            Assert.Equal(category.Id, dbProject.CategoryId);
+            Assert.Equal(subcategory.Id, dbProject.SubcategoryId);
+        }
+
+        [Fact]
+        public async Task Test_RemoveProject()
+        {
+            ProjectModel project = new ProjectModel()
+            {
+                Name = "Remove Project",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+
+            int id = await projectData.AddProject(project);
+            Assert.True(id > 0);
+
+            await projectData.RemoveProject(project);
+            var dbProject = await projectData.LoadProject(id);
+            Assert.Null(dbProject);
+        }
+
+        [Fact]
+        public async Task Test_UpdateProject()
+        {
+            ProjectModel project = new ProjectModel()
+            {
+                Name = "Update Project",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+
+            int id = await projectData.AddProject(project);
+            Assert.True(id > 0);
+
+            project.Name = "Changed Project";
+            await projectData.UpdateProject(project);
+
+            var dbProject = await projectData.LoadProject(id);
+            Assert.NotNull(dbProject);
+            Assert.Equal("Changed Project", dbProject.Name);
+            Assert.Equal(id, dbProject.Id);
+            Assert.Equal(category.Id, dbProject.CategoryId);
+            Assert.Equal(subcategory.Id, dbProject.SubcategoryId);
+        }
+
+        [Fact]
+        public async Task Test_LoadProject()
+        {
+            var dbProject = await projectData.LoadProject(1);
+            Assert.NotNull(dbProject);
+            Assert.Equal("Test Project", dbProject.Name);
+            Assert.Equal(1, dbProject.Id);
+            Assert.Equal(category.Id, dbProject.CategoryId);
+            Assert.Equal(subcategory.Id, dbProject.SubcategoryId);
+        }
+
+        [Fact]
+        public async Task Test_LoadAllProject()
+        {
+            ProjectModel project = new ProjectModel()
+            {
+                Name = "LoadAll Project",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+
+            int id = await projectData.AddProject(project);
+            var allProject = await projectData.LoadAllProjects();
+            var target = allProject.Where(x => x.Id == id).First();
+            Assert.NotNull(target);
+            Assert.Equal("LoadAll Project", target.Name);
+            Assert.Equal(id, target.Id);
+            Assert.Equal(category.Id, target.CategoryId);
+            Assert.Equal(subcategory.Id, target.SubcategoryId);
+        }
+
+        [Fact]
+        public async Task Test_ProjectsByCategory()
+        {
+            ProjectModel project = new ProjectModel()
+            {
+                Name = "ByCat Project",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+            int id = await projectData.AddProject(project);
+
+            var cats = await projectData.LoadProjectsByCategory(category);
+            Assert.True(cats.TrueForAll(x => x.CategoryId == category.Id));
+        }
+
+        [Fact]
+        public async Task Test_ProjectsBySubcategory()
+        {
+            ProjectModel project = new ProjectModel()
+            {
+                Name = "BySubCat Project",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+            int id = await projectData.AddProject(project);
+
+            var subs = await projectData.LoadProjectsBySubCategory(subcategory);
+
+            Assert.True(subs.TrueForAll(x => x.SubcategoryId == subcategory.Id));
         }
 
         protected override async void Seed()

@@ -44,31 +44,34 @@ namespace TimeTrackerLibrary.Data
 
         public async Task<int> AddProject(ProjectModel project)
         {
-            // TODO fix this
+            int id;
+
             if (project.Subcategory != null)
             {
                 StringBuilder sql = new StringBuilder("insert into Project (Name, CategoryId, SubcategoryId) ");
-                sql.Append("values (@Name, @CategoryId, @SubcategoryId);");
-                var sqlResult = await dataAccess.ExecuteRawSQL<dynamic>(sql.ToString(), new
+                sql.Append("values (@Name, @CategoryId, @SubcategoryId); ");
+                sql.Append("select last_insert_rowid();");
+                var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql.ToString(), new
                 {
                     Name = project.Name,
                     CategoryId = project.Category.Id,
                     SubcategoryId = project.Subcategory.Id
                 });
+                id = (int)queryResult.FirstOrDefault();
             }
             else
             {
                 StringBuilder sql = new StringBuilder("insert into Project (Name, CategoryId) ");
-                sql.Append("values (@Name, @CategoryId);");
-                var sqlResult = await dataAccess.ExecuteRawSQL<dynamic>(sql.ToString(), new
+                sql.Append("values (@Name, @CategoryId); ");
+                sql.Append("select last_insert_rowid();");
+                var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql.ToString(), new
                 {
                     Name = project.Name,
                     CategoryId = project.Category.Id,
                 });
+                id = (int)queryResult.FirstOrDefault();
             }
-
-            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>("select last_insert_rowid(); ", new { });
-            project.Id = (int)queryResult.FirstOrDefault();
+            project.Id = id;
 
             return project.Id;
         }
@@ -81,6 +84,16 @@ namespace TimeTrackerLibrary.Data
             await RehydrateObjects(projects);
 
             return projects;
+        }
+
+        public async Task<ProjectModel> LoadProject(int id)
+        {
+            string sql = "select [Id], [Name], [CategoryId], [SubcategoryId] from Project where Id = @id;";
+
+            var projects = await dataAccess.QueryRawSQL<ProjectModel, dynamic>(sql, new { Id = id });
+            await RehydrateObjects(projects);
+
+            return projects.FirstOrDefault();
         }
 
         public async Task<List<ProjectModel>> LoadProjectsByCategory(CategoryModel category)
