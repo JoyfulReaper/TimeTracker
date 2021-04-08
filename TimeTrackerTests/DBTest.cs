@@ -37,7 +37,7 @@ namespace TimeTrackerTests
 
         protected DBTest(string dbFile)
         {
-            dbFile = dbFile;
+            this.dbFile = dbFile;
 
             config = new Config();
             config.Initialize(DatabaseType.SQLite, $"Data Source={dbFile};Version=3;");

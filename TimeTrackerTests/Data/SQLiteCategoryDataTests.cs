@@ -52,10 +52,66 @@ namespace TimeTrackerTests.Data
             var dbCat = await categoryData.LoadCategory(id);
             Assert.NotNull(dbCat);
             Assert.True(cat.Id > 0);
-            
-            Assert.NotNull(dbCat);
             Assert.Equal("AddCategory", dbCat.Name);
             Assert.Equal(id, dbCat.Id);
+        }
+
+        [Fact]
+        public async Task Test_UpdateCategory()
+        {
+            CategoryModel cat = new CategoryModel() { Name = "UpdateCategory" };
+            var id = await categoryData.AddCategory(cat);
+
+            var dbCat = await categoryData.LoadCategory(id);
+            Assert.NotNull(dbCat);
+            Assert.True(cat.Id > 0);
+            Assert.Equal("UpdateCategory", dbCat.Name);
+            Assert.Equal(id, dbCat.Id);
+
+            dbCat.Name = "TotalyUpdatedMan";
+            await categoryData.UpdateCategory(dbCat);
+
+            dbCat = await categoryData.LoadCategory(id);
+            Assert.NotNull(dbCat);
+            Assert.True(cat.Id > 0);
+            Assert.Equal("TotalyUpdatedMan", dbCat.Name);
+            Assert.Equal(id, dbCat.Id);
+        }
+
+        [Fact]
+        public async Task Test_LoadCategory()
+        {
+            var dbCat = await categoryData.LoadCategory(1);
+            Assert.NotNull(dbCat);
+            Assert.Equal("TestCat", dbCat.Name);
+            Assert.Equal(1, dbCat.Id);
+        }
+
+        [Fact]
+        public async Task Test_LoadAllCategories()
+        {
+            CategoryModel cat = new CategoryModel() { Name = "LoadAllCategory" };
+            var id = await categoryData.AddCategory(cat);
+
+            var allCats = await categoryData.LoadAllCategories();
+            Assert.NotNull(allCats);
+            Assert.True(allCats.Count() > 0);
+
+
+            var dbCat = allCats.Where(x => x.Id == id).First();
+            Assert.Equal("LoadAllCategory", dbCat.Name);
+            Assert.Equal(id, dbCat.Id);
+        }
+
+        [Fact]
+        public async Task Test_RemoveCategory()
+        {
+            CategoryModel cat = new CategoryModel() { Name = "RemoveCategory" };
+            var id = await categoryData.AddCategory(cat);
+
+            await categoryData.RemoveCategory(cat);
+            var dbCat = await categoryData.LoadCategory(id);
+            Assert.Null(dbCat);
         }
 
         protected override async void Seed()
