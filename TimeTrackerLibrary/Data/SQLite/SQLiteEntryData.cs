@@ -45,18 +45,18 @@ namespace TimeTrackerLibrary.Data
         public async Task<int> CreateEntry(EntryModel entry)
         {
             StringBuilder sql = new StringBuilder("insert into Entry (ProjectId, HoursSpent, Date, Notes) ");
-            sql.Append("values (@ProjectId, @HoursSpent, @Date, @Notes);");
+            sql.Append("values (@ProjectId, @HoursSpent, @Date, @Notes); ");
+            sql.Append("select last_insert_rowid();");
 
-            var sqlResult = await dataAccess.ExecuteRawSQL<dynamic>(sql.ToString(), new
+            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql.ToString(), new
             {
                 ProjectId = entry.Project.Id,
                 HoursSpent = entry.HoursSpent,
                 Date = entry.Date,
                 Notes = entry.Notes
             });
-            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>("select last_insert_rowid();", new { });
-            entry.Id = (int)queryResult.FirstOrDefault();
 
+            entry.Id = (int)queryResult.FirstOrDefault();
             return entry.Id;
         }
 
@@ -127,6 +127,17 @@ namespace TimeTrackerLibrary.Data
             e.Project.Category = c.First();
             var s = await dataAccess.QueryRawSQL<SubcategoryModel, dynamic>("SELECT * FROM Subcategory WHERE ID = @Id", new { Id = e.Project.SubcategoryId });
             e.Project.Subcategory = s.FirstOrDefault();
+        }
+
+        public async Task<EntryModel> LoadEntry(int id)
+        {
+            string sql = "select [Id], [ProjectId], [HoursSpent], [Date], [Notes] from Entry where Id = @id;";
+
+            var queryResult = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { Id = id });
+            EntryModel output = queryResult.FirstOrDefault();
+
+            await RehydrateObjects(output);
+            return output;
         }
     }
 }

@@ -120,5 +120,16 @@ namespace TimeTrackerLibrary.Data
             var s = await dataAccess.QueryRawSQL<SubcategoryModel, dynamic>("SELECT * FROM Subcategory WHERE ID = @Id", new { Id = e.Project.SubcategoryId });
             e.Project.Subcategory = s.FirstOrDefault();
         }
+
+        public async Task<EntryModel> LoadEntry(int id)
+        {
+            string sql = "select [Id], [ProjectId], [HoursSpent], [Date], [Notes] from Entry where Id = @id;";
+
+            var queryResult = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { Id = id });
+            EntryModel output = queryResult.FirstOrDefault();
+
+            await RehydrateObjects(output);
+            return output;
+        }
     }
 }

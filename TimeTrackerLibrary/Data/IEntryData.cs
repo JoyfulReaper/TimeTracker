@@ -38,6 +38,8 @@ namespace TimeTrackerLibrary.Data
         /// <returns></returns>
         Task<int> CreateEntry(EntryModel entry);
 
+        Task<EntryModel> LoadEntry(int id);
+
         /// <summary>
         /// Load all Entries from the database
         /// </summary>
