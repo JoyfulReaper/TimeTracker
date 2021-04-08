@@ -44,19 +44,16 @@ namespace TimeTrackerLibrary.Data
 
         public async Task<int> AddSubcategory(SubcategoryModel subcategory)
         {
-            string sql = "insert into Subcategory (Name, CategoryId) values (@Name, @CategoryId);";
+            string sql = "insert into Subcategory (Name, CategoryId) values (@Name, @CategoryId); select last_insert_rowid();";
+            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql, subcategory);
 
-            var sqlResult = await dataAccess.ExecuteRawSQL<dynamic>(sql, new { Name = subcategory.Name, CategoryId = subcategory.Category.Id });
-            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>("select last_insert_rowid();", new { });
             subcategory.Id = (int)queryResult.FirstOrDefault();
-
             return subcategory.Id;
         }
 
         public async Task<List<SubcategoryModel>> LoadAllSubcategories(CategoryModel category)
         {
             string sql = "select [Id], [Name], [CategoryId] from Subcategory where CategoryId = @CategoryId;";
-
             var qureyResult = await dataAccess.QueryRawSQL<SubcategoryModel, dynamic>(sql, new { CategoryId = category.Id });
 
             foreach (var q in qureyResult)
@@ -65,6 +62,24 @@ namespace TimeTrackerLibrary.Data
             }
 
             return qureyResult;
+        }
+
+        public async Task<SubcategoryModel> LoadSubcategory(int id)
+        {
+            string sql = "select [Id], [Name], [CategoryId] from Subcategory where Id = @Id;";
+            var qureyResult = await dataAccess.QueryRawSQL<SubcategoryModel, dynamic>(sql, new { Id = id });
+            var output = qureyResult.FirstOrDefault();
+
+            if(output == null)
+            {
+                return null;
+            }
+
+            sql = "select [Id], [Name] from Category where Id = @id;";
+            var sqlResult = await dataAccess.QueryRawSQL<CategoryModel, dynamic>(sql, new { Id = output.CategoryId });
+            output.Category = sqlResult.FirstOrDefault();
+
+            return output;
         }
 
         public Task RemoveSubcategory(SubcategoryModel subcategory)
