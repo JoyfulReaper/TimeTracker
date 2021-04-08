@@ -26,6 +26,7 @@ SOFTWARE.
 using Dapper;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using TimeTrackerLibrary.DataAccess;
 using TimeTrackerLibrary.Models;
@@ -75,6 +76,14 @@ namespace TimeTrackerLibrary.Data
         public Task<List<CategoryModel>> LoadAllCategories()
         {
             return dataAccess.LoadData<CategoryModel, dynamic>("dbo.spCategory_GetAll", new { });
+        }
+
+        public async Task<CategoryModel> LoadCategory(int id)
+        {
+            string sql = "select [Id], [Name] from Category where Id = @id;";
+
+            var sqlResult = await dataAccess.QueryRawSQL<CategoryModel, dynamic>(sql, new { Id = id });
+            return sqlResult.FirstOrDefault();
         }
 
         /// <summary>

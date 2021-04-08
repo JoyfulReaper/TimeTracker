@@ -113,5 +113,15 @@ namespace TimeTrackerLibrary.Data
                 project.Subcategory = subcategory.FirstOrDefault();
             }
         }
+
+        public async Task<ProjectModel> LoadProject(int id)
+        {
+            string sql = "select [Id], [Name], [CategoryId], [SubcategoryId] from Project where Id = @id;";
+
+            var projects = await dataAccess.QueryRawSQL<ProjectModel, dynamic>(sql, new { Id = id });
+            await RehydrateObjects(projects);
+
+            return projects.FirstOrDefault();
+        }
     }
 }

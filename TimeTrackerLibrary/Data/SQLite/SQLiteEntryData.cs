@@ -1,7 +1,7 @@
 ﻿/*
 MIT License
 
-Copyright(c) 2021 Kyle Givler
+Copyright(c) 2020 Kyle Givler
 https://github.com/JoyfulReaper
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,69 +23,73 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Dapper;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TimeTrackerLibrary.DataAccess;
 using TimeTrackerLibrary.Models;
 
 namespace TimeTrackerLibrary.Data
 {
-    public class EntryData : IEntryData
+    public class SQLiteEntryData : IEntryData
     {
         private readonly IDataAccess dataAccess;
 
-        public EntryData(IDataAccess dataAccess)
+        public SQLiteEntryData(IDataAccess dataAccess)
         {
             this.dataAccess = dataAccess;
         }
 
-        public Task<int> CreateEntry(EntryModel entry)
+        public async Task<int> CreateEntry(EntryModel entry)
         {
-            DynamicParameters p = new DynamicParameters();
+            StringBuilder sql = new StringBuilder("insert into Entry (ProjectId, HoursSpent, Date, Notes) ");
+            sql.Append("values (@ProjectId, @HoursSpent, @Date, @Notes); ");
+            sql.Append("select last_insert_rowid();");
 
-            p.Add("ProjectId", entry.ProjectId);
-            p.Add("HoursSpent", entry.HoursSpent);
-            p.Add("Date", entry.Date);
-            p.Add("Notes", entry.Notes);
-            p.Add("Id", 0, DbType.Int32, direction: ParameterDirection.Output);
+            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql.ToString(), new
+            {
+                ProjectId = entry.Project.Id,
+                HoursSpent = entry.HoursSpent,
+                Date = entry.Date,
+                Notes = entry.Notes
+            });
 
-            return dataAccess.SaveData("dbo.spEntry_Insert", p);
+            entry.Id = (int)queryResult.FirstOrDefault();
+            return entry.Id;
         }
 
-        public Task UpdateEntry(EntryModel entry)
+        public async Task UpdateEntry(EntryModel entry)
         {
-            DynamicParameters p = new DynamicParameters();
-
-            p.Add("HoursSpent", entry.HoursSpent);
-            p.Add("Notes", entry.Notes);
-            p.Add("Date", entry.Date);
-
-            return dataAccess.SaveData("spEntry_Update", p);
+            string sql = "update Entry set HoursSpent = @HoursSpent, Notes = @Notes, Date = @Date where Id = @Id";
+            await dataAccess.ExecuteRawSQL<dynamic>(sql, entry);
         }
 
         public async Task<List<EntryModel>> LoadAllEntries()
         {
-            var entries = await dataAccess.LoadData<EntryModel, dynamic>("dbo.spEntry_GetAll", new { });
+            string sql = "select [Id], [ProjectId], [HoursSpent], [Date], [Notes] from Entry;";
+
+            var entries = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { });
 
             foreach (var e in entries)
             {
                 await RehydrateObjects(e);
             }
-            
+
             return entries;
         }
 
         public Task<List<EntryModel>> LoadEntriesByCategory(CategoryModel category)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<List<EntryModel>> LoadEntriesByProject(ProjectModel project)
         {
-            var entries = await dataAccess.LoadData<EntryModel, dynamic>("dbo.spEntry_GetByProjectId", new { ProjectId = project.Id });
+            string sql = "select [Id], [ProjectId], [HoursSpent], [Date], [Notes] from Entry where ProjectId = @ProjectId;";
+
+            var entries = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { ProjectId = project.Id});
 
             foreach (var e in entries)
             {
@@ -97,17 +101,21 @@ namespace TimeTrackerLibrary.Data
 
         public Task<List<EntryModel>> LoadEntriesBySubcategory(SubcategoryModel subcategory)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task RemoveEntry(EntryModel entry)
         {
-            return dataAccess.SaveData("spEntry_Delete", new { Id = entry.Id });
+            string sql = "delete from Entry where Id = @Id";
+
+            return dataAccess.ExecuteRawSQL<dynamic>(sql, new { Id = entry.Id });
         }
 
         public Task RemoveEntryByProject(ProjectModel project)
         {
-            return dataAccess.SaveData("spEntry_DeleteByProject", new { ProjectId = project.Id});
+            string sql = "delete from Entry where ProjectId = @ProjectId";
+
+            return dataAccess.ExecuteRawSQL<dynamic>(sql, new { ProjectId = project.Id });
         }
 
         private async Task RehydrateObjects(EntryModel e)
@@ -119,6 +127,21 @@ namespace TimeTrackerLibrary.Data
             e.Project.Category = c.First();
             var s = await dataAccess.QueryRawSQL<SubcategoryModel, dynamic>("SELECT * FROM Subcategory WHERE ID = @Id", new { Id = e.Project.SubcategoryId });
             e.Project.Subcategory = s.FirstOrDefault();
+        }
+
+        public async Task<EntryModel> LoadEntry(int id)
+        {
+            string sql = "select [Id], [ProjectId], [HoursSpent], [Date], [Notes] from Entry where Id = @id;";
+
+            var queryResult = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { Id = id });
+            EntryModel output = queryResult.FirstOrDefault();
+
+            if (output != null)
+            {
+                await RehydrateObjects(output);
+            }
+            
+            return output;
         }
     }
 }

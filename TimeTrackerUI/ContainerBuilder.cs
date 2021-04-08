@@ -54,7 +54,7 @@ namespace TimeTrackerLibrary
 
             if(db == DatabaseType.SQLite)
             {
-                container.AddSingleton<IDataAccess, SqlliteDb>()
+                container.AddSingleton<IDataAccess, SQLiteDb>()
                     .AddSingleton<ICategoryData, SQLiteCategoryData>()
                     .AddSingleton<ISubcategoryData, SQLiteSubcategoryData>()
                     .AddSingleton<IProjectData, SQLiteProjectData>()

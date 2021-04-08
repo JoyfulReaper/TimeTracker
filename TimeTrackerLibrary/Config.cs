@@ -37,24 +37,30 @@ namespace TimeTrackerLibrary
         public IConfiguration Configuration { get; private set; }
         public DatabaseType DBType { get; private set; }
 
+        public string ConnectionString { get; private set; }
+
         public Config()
         {
-            Configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true).Build();
+            
         }
 
         public void Initialize()
         {
+            Configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true).Build();
+
             var databaseSetting = Configuration.GetSection("DatabaseType").Value;
 
             if (databaseSetting == "SQLite")
             {
+                ConnectionString = Configuration.GetConnectionString("SQLite");
                 DBType = DatabaseType.SQLite;
-                SqlliteDb sql = new SqlliteDb(this);
+                SQLiteDb sql = new SQLiteDb(this);
                 Connection = sql;
 
                 return;
             } else if (databaseSetting == "MSSQL")
             {
+                ConnectionString = Configuration.GetConnectionString("MSSQL");
                 DBType = DatabaseType.MSSQL;
                 SqlDb sql = new SqlDb(this);
                 Connection = sql;
@@ -67,19 +73,25 @@ namespace TimeTrackerLibrary
             }
         }
 
-        public string ConnectionString()
+        public void Initialize(DatabaseType dbType, string connectionString)
         {
-            if (DBType == DatabaseType.MSSQL)
-            {
-                return Configuration.GetConnectionString("MSSQL");
-            }
+            Configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true).Build();
 
-            if(DBType == DatabaseType.SQLite)
-            {
-                return Configuration.GetConnectionString("SQLite");
-            }
+            ConnectionString = connectionString;
+            DBType = dbType;
 
-            throw new InvalidOperationException("DBType is not valid");
+            switch (dbType)
+            {
+                case DatabaseType.MSSQL:
+                    Connection = new SqlDb(this);
+                    break;
+                case DatabaseType.SQLite:
+                    Connection = new SQLiteDb(this);
+                    break;
+                default:
+                    throw new InvalidOperationException("Default case hit :(");
+                    break;
+            }
         }
     }
 }

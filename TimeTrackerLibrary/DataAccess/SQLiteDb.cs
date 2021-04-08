@@ -37,11 +37,11 @@ using TimeTrackerLibrary.Properties;
 
 namespace TimeTrackerLibrary.DataAccess
 {
-    public class SqlliteDb : IDataAccess
+    public class SQLiteDb : IDataAccess
     {
         private readonly IConfig config;
 
-        public SqlliteDb(IConfig config)
+        public SQLiteDb(IConfig config)
         {
             this.config = config;
 
@@ -65,7 +65,7 @@ namespace TimeTrackerLibrary.DataAccess
 
         public async Task<List<T>> QueryRawSQL<T, U>(string sql, U parameters)
         {
-            using (IDbConnection connection = new SQLiteConnection(config.ConnectionString()))
+            using (IDbConnection connection = new SQLiteConnection(config.ConnectionString))
             {
                 var res = await connection.QueryAsync<T>(sql, parameters);
                 return res.ToList();
@@ -74,7 +74,7 @@ namespace TimeTrackerLibrary.DataAccess
 
         public async Task<int> ExecuteRawSQL<T>(string sql, T parameters)
         {
-            using (IDbConnection connection = new SQLiteConnection(config.ConnectionString()))
+            using (IDbConnection connection = new SQLiteConnection(config.ConnectionString))
             {
                 var res = await connection.ExecuteAsync(sql, parameters);
                 return res;
@@ -84,12 +84,12 @@ namespace TimeTrackerLibrary.DataAccess
         private void CreateDatabaseIfNotExists()
         {
             DbConnectionStringBuilder builder = new DbConnectionStringBuilder();
-            builder.ConnectionString = config.ConnectionString();
+            builder.ConnectionString = config.ConnectionString;
             builder.TryGetValue("Data Source", out object databaseFile);
 
             if (!File.Exists(databaseFile.ToString()))
             {
-                using (IDbConnection connection = new SQLiteConnection(config.ConnectionString()))
+                using (IDbConnection connection = new SQLiteConnection(config.ConnectionString))
                 {
                     connection.Execute(Resources.CreateSQLiteDB);
                 }
