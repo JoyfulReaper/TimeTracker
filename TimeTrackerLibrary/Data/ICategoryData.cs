@@ -44,6 +44,8 @@ namespace TimeTrackerLibrary.Data
         /// <param name="category">The category to update</param>
         Task UpdateCategory(CategoryModel category);
 
+        Task<CategoryModel> LoadCategory(int id);
+
         /// <summary>
         /// Load all Categories from the database
         /// </summary>

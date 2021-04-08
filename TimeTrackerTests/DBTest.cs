@@ -1,7 +1,7 @@
 ﻿/*
 MIT License
 
-Copyright(c) 2020 Kyle Givler
+Copyright(c) 2021 Kyle Givler
 https://github.com/JoyfulReaper
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -23,20 +23,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-using Microsoft.Extensions.Configuration;
-using TimeTrackerLibrary.DataAccess;
+using System;
+using System.IO;
+using TimeTrackerLibrary;
+using TimeTrackerLibrary.Interfaces;
 
-namespace TimeTrackerLibrary.Interfaces
+namespace TimeTrackerTests
 {
-    public interface IConfig
+    public abstract class DBTest : IDisposable
     {
-        IConfiguration Configuration { get; }
-        IDataAccess Connection { get; }
-        DatabaseType DBType { get; }
+        protected readonly IConfig config;
+        protected readonly string dbFile;
 
-        public string ConnectionString { get; }
-        void Initialize();
+        protected DBTest(string dbFile)
+        {
+            this.dbFile = dbFile;
 
-        public void Initialize(DatabaseType type, string connectionString);
+            config = new Config();
+            config.Initialize(DatabaseType.SQLite, $"Data Source={dbFile};Version=3;");
+
+            Seed();
+        }
+
+        protected abstract void Seed();
+
+        public void Dispose()
+        {
+            if (File.Exists(dbFile))
+            {
+                File.Delete(dbFile);
+            }
+        }
     }
 }

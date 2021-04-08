@@ -44,6 +44,8 @@ namespace TimeTrackerLibrary.Data
         /// <param name="subcategory">The subcategory to update</param>
         Task UpdateSubcategory(SubcategoryModel subcategory);
 
+        Task<SubcategoryModel> LoadSubcategory(int id);
+
         /// <summary>
         /// Load subcategories associated with a category
         /// </summary>
