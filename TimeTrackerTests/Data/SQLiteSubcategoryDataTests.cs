@@ -64,6 +64,82 @@ namespace TimeTrackerTests.Data
             Assert.Equal(category.Id, dbSub.CategoryId);
         }
 
+        [Fact]
+        public async Task Test_LoadAllSubcategories()
+        {
+            SubcategoryModel sub = new SubcategoryModel()
+            {
+                Name = "LoadAllSubcategoryTest",
+                Category = category,
+                CategoryId = category.Id
+            };
+
+            var id = await subcategoryData.AddSubcategory(sub);
+            Assert.True(id > 0);
+
+            var allSub = await subcategoryData.LoadAllSubcategories(category);
+            Assert.NotNull(allSub);
+            Assert.True(allSub.Count > 1);
+
+            var dbSub = allSub.Where(x => x.Id == id).FirstOrDefault();
+            Assert.NotNull(dbSub);
+            Assert.Equal("LoadAllSubcategoryTest", dbSub.Name);
+            Assert.Equal(id, dbSub.Id);
+            Assert.Equal(category.Id, dbSub.CategoryId);
+        }
+
+        [Fact]
+        public async Task Test_LoadSubcategory()
+        {
+            var dbSub = await subcategoryData.LoadSubcategory(1);
+            Assert.NotNull(dbSub);
+            Assert.Equal("SubcatTest", dbSub.Name);
+            Assert.Equal(1, dbSub.Id);
+            Assert.Equal(category.Id, dbSub.CategoryId);
+        }
+
+        [Fact]
+        public async Task Test_RemoveSubcategory()
+        {
+            SubcategoryModel sub = new SubcategoryModel()
+            {
+                Name = "RemoveSubcategoryTest",
+                Category = category,
+                CategoryId = category.Id
+            };
+
+            var id = await subcategoryData.AddSubcategory(sub);
+            Assert.True(id > 0);
+
+            await subcategoryData.RemoveSubcategory(sub);
+
+            var dbSub = await subcategoryData.LoadSubcategory(id);
+            Assert.Null(dbSub);
+        }
+
+        [Fact]
+        public async Task Test_UpdateSubcategory()
+        {
+            SubcategoryModel sub = new SubcategoryModel()
+            {
+                Name = "UpdateSubcategoryTest",
+                Category = category,
+                CategoryId = category.Id
+            };
+
+            var id = await subcategoryData.AddSubcategory(sub);
+            Assert.True(id > 0);
+
+            sub.Name = "ChangedSubcategoryTest";
+            await subcategoryData.UpdateSubcategory(sub);
+
+            var dbSub = await subcategoryData.LoadSubcategory(id);
+            Assert.NotNull(dbSub);
+            Assert.Equal("ChangedSubcategoryTest", dbSub.Name);
+            Assert.Equal(id, dbSub.Id);
+            Assert.Equal(category.Id, dbSub.CategoryId);
+        }
+
         protected override async void Seed()
         {
             category = new CategoryModel()
