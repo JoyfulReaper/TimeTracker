@@ -69,6 +69,178 @@ namespace TimeTrackerTests.Data
             Assert.Equal(2, dbEntry.HoursSpent);
         }
 
+        [Fact]
+        public async Task Test_LoadEntry()
+        {
+            var dbEntry = await entryData.LoadEntry(1);
+
+            Assert.NotNull(dbEntry);
+            Assert.Equal(1, dbEntry.Id);
+            Assert.Equal(project.Id, dbEntry.ProjectId);
+            Assert.Equal("Test Notes", dbEntry.Notes);
+            Assert.Equal(1, dbEntry.HoursSpent);
+        }
+
+        [Fact]
+        public async Task Test_LoadAllEntries()
+        {
+            EntryModel entry = new EntryModel()
+            {
+                Project = project,
+                ProjectId = project.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 3,
+                Notes = "Test LoadAll"
+            };
+
+            int id = await entryData.CreateEntry(entry);
+
+            var entries = await entryData.LoadAllEntries();
+            var dbEntry = entries.Where(x => x.Id == id).FirstOrDefault();
+            Assert.NotNull(dbEntry);
+            Assert.Equal(id, dbEntry.Id);
+            Assert.Equal(project.Id, dbEntry.ProjectId);
+            Assert.Equal("Test LoadAll", dbEntry.Notes);
+            Assert.Equal(3, dbEntry.HoursSpent);
+        }
+
+        [Fact]
+        public async Task Test_LoadEntriesByProject()
+        {
+            ProjectModel model = new ProjectModel()
+            {
+                Name = "Test Project Entries",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+
+            StringBuilder sqlBuilder = new StringBuilder();
+            sqlBuilder.Append("insert into Project(Name, CategoryId, SubcategoryId) ");
+            sqlBuilder.Append("values (@Name, @CategoryId, @SubcategoryId); ");
+            sqlBuilder.Append("select last_insert_rowid();");
+
+            var queryResult = await config.Connection.QueryRawSQL<Int64, dynamic>(sqlBuilder.ToString(), project);
+            model.Id = (int)queryResult.FirstOrDefault();
+
+            EntryModel entry = new EntryModel()
+            {
+                Project = model,
+                ProjectId = model.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 5,
+                Notes = "Test Load By Project"
+            };
+
+            EntryModel entry2 = new EntryModel()
+            {
+                Project = model,
+                ProjectId = model.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 2,
+                Notes = "Test Load By Project2"
+            };
+
+            await entryData.CreateEntry(entry);
+            await entryData.CreateEntry(entry2);
+
+            var entries = await entryData.LoadEntriesByProject(model);
+            Assert.NotNull(entries);
+            Assert.Equal(2, entries.Count);
+
+            var target = entries.Where(x => x.Id == entry2.Id).FirstOrDefault();
+            Assert.NotNull(target);
+            Assert.Equal(entry2.Id, target.Id);
+            Assert.Equal(model.Id, target.ProjectId);
+            Assert.Equal("Test Load By Project2", target.Notes);
+            Assert.Equal(2, target.HoursSpent);
+        }
+
+        [Fact]
+        public async Task Test_RemoveEntry()
+        {
+            EntryModel entry = new EntryModel()
+            {
+                Project = project,
+                ProjectId = project.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 5,
+                Notes = "Remove Entry"
+            };
+
+            var id = await entryData.CreateEntry(entry);
+            await entryData.RemoveEntry(entry);
+            var dbEntry = await entryData.LoadEntry(id);
+            Assert.Null(dbEntry);
+        }
+
+        [Fact]
+        public async Task Test_RemoveEntryByProject()
+        {
+            ProjectModel projectModel = new ProjectModel()
+            {
+                Name = "Remove Project Entries",
+                Category = category,
+                CategoryId = category.Id,
+                Subcategory = subcategory,
+                SubcategoryId = subcategory.Id
+            };
+
+            StringBuilder sqlBuilder = new StringBuilder();
+            sqlBuilder.Append("insert into Project(Name, CategoryId, SubcategoryId) ");
+            sqlBuilder.Append("values (@Name, @CategoryId, @SubcategoryId); ");
+            sqlBuilder.Append("select last_insert_rowid();");
+
+            var queryResult = await config.Connection.QueryRawSQL<Int64, dynamic>(sqlBuilder.ToString(), project);
+            projectModel.Id = (int)queryResult.FirstOrDefault();
+
+            EntryModel entry = new EntryModel()
+            {
+                Project = projectModel,
+                ProjectId = projectModel.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 4,
+                Notes = "Test Remove By Project"
+            };
+
+            await entryData.CreateEntry(entry);
+            var entries = await entryData.LoadEntriesByProject(projectModel);
+            Assert.NotNull(entries);
+            Assert.True(entries.Count == 1);
+
+            await entryData.RemoveEntryByProject(projectModel);
+            entries = await entryData.LoadEntriesByProject(projectModel);
+            Assert.NotNull(entries);
+            Assert.True(entries.Count == 0);
+        }
+
+        [Fact]
+        public async Task Test_UpdateEntry()
+        {
+            EntryModel entry = new EntryModel()
+            {
+                Project = project,
+                ProjectId = project.Id,
+                Date = DateTimeOffset.Now,
+                HoursSpent = 9,
+                Notes = "Test Update"
+            };
+
+            var id = await entryData.CreateEntry(entry);
+            Assert.True(id > 0);
+
+            entry.Notes = "Test Updated!";
+            await entryData.UpdateEntry(entry);
+
+            var dbEntry = await entryData.LoadEntry(id);
+            Assert.NotNull(dbEntry);
+            Assert.Equal(id, dbEntry.Id);
+            Assert.Equal(project.Id, dbEntry.ProjectId);
+            Assert.Equal("Test Updated!", dbEntry.Notes);
+            Assert.Equal(9, dbEntry.HoursSpent);
+        }
+
         protected override async void Seed()
         {
             // Add test category
@@ -126,7 +298,7 @@ namespace TimeTrackerTests.Data
             sqlBuilder.Append("values (@ProjectId, @HoursSpent, @Date, @Notes); ");
             sqlBuilder.Append("select last_insert_rowid();");
 
-            queryResult = await config.Connection.QueryRawSQL<Int64, dynamic>(sql.ToString(), entry);
+            queryResult = await config.Connection.QueryRawSQL<Int64, dynamic>(sqlBuilder.ToString(), entry);
         }
     }
 }

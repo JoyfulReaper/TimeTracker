@@ -136,7 +136,11 @@ namespace TimeTrackerLibrary.Data
             var queryResult = await dataAccess.QueryRawSQL<EntryModel, dynamic>(sql, new { Id = id });
             EntryModel output = queryResult.FirstOrDefault();
 
-            await RehydrateObjects(output);
+            if (output != null)
+            {
+                await RehydrateObjects(output);
+            }
+            
             return output;
         }
     }
