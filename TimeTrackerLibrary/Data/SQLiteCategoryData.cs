@@ -44,13 +44,19 @@ namespace TimeTrackerLibrary.Data
 
         public async Task<int> AddCategory(CategoryModel category)
         {
-            string sql = "insert into Category (Name) values (@Name);";
-
-            var sqlResult = await dataAccess.ExecuteRawSQL<dynamic>(sql, new { Name = category.Name });
-            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>("select last_insert_rowid();", new { });
+            string sql = "insert into Category (Name) values (@Name); select last_insert_rowid();";
+            var queryResult = await dataAccess.QueryRawSQL<Int64, dynamic>(sql, new { Name = category.Name});
             category.Id = (int)queryResult.FirstOrDefault();
 
             return category.Id;
+        }
+
+        public async Task<CategoryModel> LoadCategory(int id)
+        {
+            string sql = "select [Id], [Name] from Category where Id = @id;";
+
+            var sqlResult = await dataAccess.QueryRawSQL<CategoryModel, dynamic>(sql, new { Id = id });
+            return sqlResult.FirstOrDefault();
         }
 
         public Task<List<CategoryModel>> LoadAllCategories()

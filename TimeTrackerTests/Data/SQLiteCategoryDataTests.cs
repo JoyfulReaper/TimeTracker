@@ -23,39 +23,47 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using TimeTrackerLibrary.Data;
 using TimeTrackerLibrary.Models;
+using Xunit;
 
-namespace TimeTrackerLibrary.Data
+namespace TimeTrackerTests.Data
 {
-    public interface ICategoryData
+    public class SQLiteCategoryDataTests : DBTest
     {
-        /// <summary>
-        /// Add a category
-        /// </summary>
-        /// <param name="category">The CategoryModel to add to the database</param>
-        /// <returns>The Id of the CategoryModel</returns>
-        Task<int> AddCategory(CategoryModel category);
+        private readonly SQLiteCategoryData categoryData;
 
-        /// <summary>
-        /// Update a Category
-        /// </summary>
-        /// <param name="category">The category to update</param>
-        Task UpdateCategory(CategoryModel category);
+        public SQLiteCategoryDataTests() : base("CatTests.db")
+        {
+            categoryData = new SQLiteCategoryData(config.Connection);
+        }
 
-        Task<CategoryModel> LoadCategory(int id);
+        [Fact]
+        public async Task Test_AddCategory()
+        {
+            CategoryModel cat = new CategoryModel() { Name = "AddCategory" };
+            var id = await categoryData.AddCategory(cat);
 
-        /// <summary>
-        /// Load all Categories from the database
-        /// </summary>
-        /// <returns>A list of all CategoryModels in the database</returns>
-        Task<List<CategoryModel>> LoadAllCategories();
+            var dbCat = await categoryData.LoadCategory(id);
+            Assert.NotNull(dbCat);
+            Assert.True(cat.Id > 0);
+            
+            Assert.NotNull(dbCat);
+            Assert.Equal("AddCategory", dbCat.Name);
+            Assert.Equal(id, dbCat.Id);
+        }
 
-        /// <summary>
-        /// Remove category from the database
-        /// </summary>
-        /// <param name="category">The Category to remove</param>
-        Task RemoveCategory(CategoryModel category);
+        protected override async void Seed()
+        {
+            string sql = "insert into Category (Name) values (@Name); select last_insert_rowid();";
+
+            var sqlResult = await config.Connection.QueryRawSQL<Int64, dynamic>(sql, new { Name = "TestCat" });
+            int id = (int)sqlResult.First();
+        }
     }
 }
