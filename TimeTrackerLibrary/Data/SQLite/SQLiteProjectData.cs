@@ -44,6 +44,7 @@ namespace TimeTrackerLibrary.Data
 
         public async Task<int> AddProject(ProjectModel project)
         {
+            // TODO fix this
             if (project.Subcategory != null)
             {
                 StringBuilder sql = new StringBuilder("insert into Project (Name, CategoryId, SubcategoryId) ");
