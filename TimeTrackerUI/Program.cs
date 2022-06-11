@@ -32,7 +32,7 @@ namespace TimeTrackerUI
 {
     static class Program
     {
-        public static readonly IServiceProvider Container = new ContainerBuilder().Build();
+        private static readonly IServiceProvider Container = new ContainerBuilder().Build();
 
         /// <summary>
         ///  The main entry point for the application.
