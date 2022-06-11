@@ -1,3 +1,6 @@
+Version 0.5.0 - 06/11/22
+	- Complete Re-Write
+
 Version 0.4.1 - 04/08/21
 	- Add tests for Data Access Objects
 

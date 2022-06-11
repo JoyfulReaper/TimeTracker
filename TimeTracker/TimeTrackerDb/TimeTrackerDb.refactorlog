@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="10e6202e-17a1-48d8-8810-13b95be93aa6" ChangeDateTime="06/11/2022 16:44:38">
+    <Property Name="ElementName" Value="[dbo].[Category].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Category]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CategoryId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="6404d203-5052-4938-92f5-659c30b6c5bb" ChangeDateTime="06/11/2022 16:46:52">
+    <Property Name="ElementName" Value="[dbo].[Subcategory].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Subcategory]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SubcategoryId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="007de67a-3121-49fc-a820-ccb861abaac8" ChangeDateTime="06/11/2022 16:49:34">
+    <Property Name="ElementName" Value="[dbo].[Project].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Project]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProjectId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="7d161779-7e03-48d0-8bea-606fc66595be" ChangeDateTime="06/11/2022 16:53:47">
+    <Property Name="ElementName" Value="[dbo].[Note].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Note]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="NoteId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="437962a7-ae5b-4941-9509-32d20fb2fd08" ChangeDateTime="06/11/2022 16:54:41">
+    <Property Name="ElementName" Value="[dbo].[EntryNote].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[EntryNote]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EntryNoteId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="b70b9194-a457-4aae-9740-06f9050fb39f" ChangeDateTime="06/11/2022 16:55:47">
+    <Property Name="ElementName" Value="[dbo].[Entry].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Entry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EntryId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="07ed961e-4f8b-497d-bb59-eaa6a955f15d" ChangeDateTime="06/11/2022 17:08:36">
+    <Property Name="ElementName" Value="[dbo].[Goal].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Goal]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="GoalId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="123f22dd-4219-4148-a232-d976e0ecf9ad" ChangeDateTime="06/11/2022 17:10:00">
+    <Property Name="ElementName" Value="[dbo].[GoalNote].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GoalNote]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="GoalNoteId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ebab124b-b23a-49f6-b976-8678a7e3f473" ChangeDateTime="06/11/2022 17:10:35">
+    <Property Name="ElementName" Value="[dbo].[GoalProject].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[GoalProject]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="GoalProjectId" />
+  </Operation>
+</Operations>

@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[Goal]
+(
+	[GoalId] INT NOT NULL PRIMARY KEY IDENTITY, 
+	[UserId] NVARCHAR(128) NOT NULL,
+    [Name] VARCHAR(75) NOT NULL
+)
