@@ -1,6 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using TimeTracker.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TimeTrackerApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +17,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var IdentityConnectionString = builder.Configuration.GetConnectionString("TimeTrackerIdentity");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<IdentityDbContext>(options =>
     options.UseSqlServer(IdentityConnectionString));
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
+{
+    opts.User.RequireUniqueEmail = true;
+})
+    .AddEntityFrameworkStores<IdentityDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
+    {
+        opts.TokenValidationParameters.ValidateAudience = false;
+        opts.TokenValidationParameters.ValidateIssuer = false;
+        opts.TokenValidationParameters.IssuerSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                builder.Configuration["BearerTokens:Key"]));
+    });
 
 if (builder.Environment.IsDevelopment())
 {
@@ -34,5 +56,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.SeedAdminUser();
 
 app.Run();
