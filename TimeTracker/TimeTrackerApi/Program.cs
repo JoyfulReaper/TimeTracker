@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TimeTrackerApi;
+using TimeTrackerApi.Library.Repositories.Interfaces;
+using TimeTrackerApi.Library.Repositories;
+using TimeTrackerApi.Library.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +26,18 @@ builder.Services.AddDbContext<IdentityDbContext>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
 {
     opts.User.RequireUniqueEmail = true;
-})
-    .AddEntityFrameworkStores<IdentityDbContext>()
+}).AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddAuthentication()
-    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
+builder.Services.AddScoped<IDataAccess, SqlDataAccess>();
+builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
+
+builder.Services.AddAuthentication(opts =>
+{
+    opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
     {
         opts.TokenValidationParameters.ValidateAudience = false;
         opts.TokenValidationParameters.ValidateIssuer = false;
@@ -36,6 +45,7 @@ builder.Services.AddAuthentication()
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 builder.Configuration["BearerTokens:Key"]));
     });
+
 
 if (builder.Environment.IsDevelopment())
 {
@@ -53,6 +63,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

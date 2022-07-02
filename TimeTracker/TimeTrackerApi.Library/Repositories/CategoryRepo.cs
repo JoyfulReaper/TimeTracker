@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeTrackerApi.Library.DataAccess;
 using TimeTrackerApi.Library.Models;
+using TimeTrackerApi.Library.Repositories.Interfaces;
 
 namespace TimeTrackerApi.Library.Repositories;
-public class CategoryRepo
+public class CategoryRepo : ICategoryRepo
 {
     private readonly IDataAccess _dataAccess;
 
@@ -16,12 +17,12 @@ public class CategoryRepo
         _dataAccess = dataAccess;
     }
 
-    public Task<List<Category>> GetCategorys(string userId)
+    public Task<List<Category>> GetCategoriesAsync(string userId)
     {
         return _dataAccess.LoadDataAsync<Category, dynamic>("spCategory_Get", new { UserId = userId }, "TimeTrackerData");
     }
 
-    public Task SaveCategory(Category category)
+    public Task SaveCategoryAsync(Category category)
     {
         return _dataAccess.SaveDataAsync("spCategory_Save", category, "TimeTrackerData");
     }

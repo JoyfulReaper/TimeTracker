@@ -27,7 +27,7 @@ public class SqlDataAccess : IDataAccess
 
     public string GetConnectionString(string name)
     {
-        return _config.GetConnectionString("TRMData");
+        return _config.GetConnectionString(name);
     }
 
     public async Task<List<T>> LoadDataAsync<T, U>(string storedProcedure, U parameters, string connectionStringName)
