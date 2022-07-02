@@ -5,5 +5,6 @@
     [Name] VARCHAR(75) NOT NULL, 
     [CategoryId] INT NOT NULL, 
     [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
-    CONSTRAINT [FK_Subcategory_Category] FOREIGN KEY ([CategoryId]) REFERENCES [Category]([CategoryId])
+    CONSTRAINT [FK_Subcategory_Category] FOREIGN KEY ([CategoryId]) REFERENCES [Category]([CategoryId]),
+    CONSTRAINT [FK_Subcategory_User] FOREIGN KEY ([UserId]) REFERENCES [User]([UserId])
 )

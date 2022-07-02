@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[Goal]
 (
 	[GoalId] INT NOT NULL PRIMARY KEY IDENTITY, 
-	[UserId] NVARCHAR(128) NOT NULL,
-    [Name] VARCHAR(75) NOT NULL
+	[ProjectId] INT NOT NULL,
+    [Name] VARCHAR(75) NOT NULL, 
+    CONSTRAINT [FK_Goal_Project] FOREIGN KEY ([ProjectId]) REFERENCES [Project]([ProjectId])
 )

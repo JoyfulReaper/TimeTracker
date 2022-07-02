@@ -1,0 +1,8 @@
+﻿CREATE TABLE [dbo].[User]
+(
+	[UserId] NVARCHAR(128) NOT NULL PRIMARY KEY, 
+    [FirstName] NVARCHAR(75) NOT NULL, 
+    [LastName] NVARCHAR(75) NOT NULL, 
+    [EmailAddress] NVARCHAR(300) NOT NULL, 
+    [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE()
+)

@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using TimeTracker.Data;
+using Microsoft.Extensions.DependencyInjection;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,15 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var IdentityConnectionString = builder.Configuration.GetConnectionString("TimeTrackerIdentity");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(IdentityConnectionString));
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+}
 
 var app = builder.Build();
 
