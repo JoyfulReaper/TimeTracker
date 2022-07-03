@@ -72,7 +72,12 @@ public class ApiClient : IApiClient
     private async Task GetLoggedInUserInfo(string token)
     {
         var user = await _apiClient.GetFromJsonAsync<LoggedInUser>("api/User");
-        
+        if(user == null)
+        {
+            throw new Exception("Unable to deserialze API response");
+        }
+
+        _loggedInUser.UserId = user.UserId;
         _loggedInUser.Token = token;
         _loggedInUser.FirstName = user.FirstName;
         _loggedInUser.LastName = user.LastName;

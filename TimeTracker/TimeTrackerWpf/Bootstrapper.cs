@@ -39,6 +39,8 @@ public class Bootstrapper : BootstrapperBase
         
         _container.Instance(ConfigureConfiguration());
 
+        _container.PerRequest<ICategoryEndpoint, CategoryEndpoint>();
+        
         GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)
                 .Where(type => type.Name.EndsWith("ViewModel"))

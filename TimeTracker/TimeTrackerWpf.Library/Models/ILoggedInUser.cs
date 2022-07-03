@@ -2,6 +2,7 @@
 
 public interface ILoggedInUser
 {
+    string UserId { get; set; }
     string EmailAddress { get; set; }
     string FirstName { get; set; }
     string LastName { get; set; }

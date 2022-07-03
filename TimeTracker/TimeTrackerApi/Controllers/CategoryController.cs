@@ -18,9 +18,15 @@ public class CategoryController : ControllerBase
         _category = category;
     }
 
-    [HttpGet("category")]
-    public async Task <IEnumerable<Category>> GetCategories(string userId)
+    [HttpGet]
+    public async Task<IEnumerable<Category>> GetCategories(string userId)
     {
         return await _category.GetCategoriesAsync(userId);
+    }
+
+    [HttpPost]
+    public async Task AddCategory(Category category)
+    {
+        await _category.AddCategoryAsync(category);
     }
 }

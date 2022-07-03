@@ -5,6 +5,7 @@ BEGIN
 	SET NOCOUNT ON;
 	
 	SELECT 
+		[CategoryId],
 		[UserId], 
 		[Name],
 		[DateCreated] 
