@@ -2,7 +2,7 @@
 (
 	[CategoryId] INT NOT NULL PRIMARY KEY IDENTITY, 
 	[UserId] NVARCHAR(128) NOT NULL,
-    [Name] VARCHAR(75) NOT NULL, 
+    [Name] NVARCHAR(75) NOT NULL, 
     [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 
     CONSTRAINT [FK_Category_User] FOREIGN KEY ([UserId]) REFERENCES [User]([UserId]), 
 )

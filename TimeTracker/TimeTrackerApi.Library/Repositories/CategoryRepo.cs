@@ -22,8 +22,8 @@ public class CategoryRepo : ICategoryRepo
         return _dataAccess.LoadDataAsync<Category, dynamic>("spCategory_Get", new { UserId = userId }, "TimeTrackerData");
     }
 
-    public Task SaveCategoryAsync(Category category)
+    public Task AddCategoryAsync(Category category)
     {
-        return _dataAccess.SaveDataAsync("spCategory_Save", category, "TimeTrackerData");
+        return _dataAccess.SaveDataAsync("spCategory_Insert", category, "TimeTrackerData");
     }
 }

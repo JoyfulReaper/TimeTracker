@@ -75,6 +75,7 @@
     <Build Include="dbo\Tables\User.sql" />
     <Build Include="dbo\Stored Procedures\spCategory_Get.sql" />
     <Build Include="dbo\Stored Procedures\spUser_GetById.sql" />
+    <Build Include="dbo\Stored Procedures\spCategory_Insert.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TimeTrackerDb.refactorlog" />
