@@ -10,15 +10,16 @@ namespace TimeTrackerWpf.ViewModels;
 
 public class ShellViewModel : Conductor<object>
 {
-    private readonly CategoryManagerViewModel _categoryVm;
+    private readonly LoginViewModel _login;
 
-    public ShellViewModel(CategoryManagerViewModel categoryVm)
+    public ShellViewModel(LoginViewModel login)
     {
-        _categoryVm = categoryVm;
-        
+        _login = login;
+
         Task.Run(async () =>
         {
-            await ActivateItemAsync(_categoryVm, new CancellationToken());
+            await ActivateItemAsync(_login, new CancellationToken());
         });
+        
     }
 }

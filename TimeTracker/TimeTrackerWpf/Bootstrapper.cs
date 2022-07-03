@@ -1,28 +1,45 @@
 ﻿using Caliburn.Micro;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using TimeTrackerWpf.Helpers;
+using TimeTrackerWpf.Library.Api;
 using TimeTrackerWpf.ViewModels;
 
 namespace TimeTrackerWpf;
 public class Bootstrapper : BootstrapperBase
 {
-    private SimpleContainer _container;
+    private SimpleContainer _container = null!;
     
     public Bootstrapper()
     {
         Initialize();
+
+        ConventionManager.AddElementConvention<PasswordBox>(
+            PasswordBoxHelper.BoundPasswordProperty,
+            "Password",
+            "PasswordChanged");
     }
 
     protected override void Configure()
     {
-        _container = new SimpleContainer();
+        IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", false, true);
+        IConfiguration config = configBuilder.Build();
 
+        _container = new SimpleContainer();
+        
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
+        _container.Singleton<IApiClient, ApiClient>();
+        _container.Instance(config);
 
         GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)
