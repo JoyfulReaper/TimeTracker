@@ -11,5 +11,4 @@ public interface IApiClient
     HttpClient Client { get; }
     Task<AuthenticatedUser> Authenticate(string username, string password);
     void LogOffUser();
-    Task GetLoggedInUserInfo(string token);    
 }

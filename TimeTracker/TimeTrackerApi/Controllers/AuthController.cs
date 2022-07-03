@@ -27,6 +27,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<object> SignIn([FromBody] SignInCredentials creds)
     {
         IdentityUser user = await _userManager.FindByNameAsync(creds.Username);
@@ -51,9 +53,15 @@ public class AuthController : ControllerBase
                 JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
                 SecurityToken secToken = handler.CreateToken(descriptor);
 
-                return new { success = true, token = handler.WriteToken(secToken) };
+                return new
+                {
+                    success = true,
+                    token = handler.WriteToken(secToken),
+                    Username = user.UserName
+                };
             }
         }
-        return new { success = false };
+        //return BadRequest( new { success = false } );
+        return StatusCode(StatusCodes.Status401Unauthorized, new { success = false });
     }
 }

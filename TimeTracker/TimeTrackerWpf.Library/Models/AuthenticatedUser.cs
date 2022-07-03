@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace TimeTrackerWpf.Library.Models;
 public class AuthenticatedUser
 {
-    public string Access_Token { get; set; } = null!;
-    public string UserName { get; set; } = null!;
+    bool Success { get; set; }
+    public string Token { get; set; } = null!;
+    public string Username { get; set; } = null!;
 }

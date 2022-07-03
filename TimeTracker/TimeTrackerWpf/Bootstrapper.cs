@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TimeTrackerWpf.Helpers;
 using TimeTrackerWpf.Library.Api;
+using TimeTrackerWpf.Library.Models;
 using TimeTrackerWpf.ViewModels;
 
 namespace TimeTrackerWpf;
@@ -29,17 +30,14 @@ public class Bootstrapper : BootstrapperBase
 
     protected override void Configure()
     {
-        IConfigurationBuilder configBuilder = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", false, true);
-        IConfiguration config = configBuilder.Build();
-
         _container = new SimpleContainer();
         
         _container.Singleton<IWindowManager, WindowManager>();
         _container.Singleton<IEventAggregator, EventAggregator>();
         _container.Singleton<IApiClient, ApiClient>();
-        _container.Instance(config);
+        _container.Singleton<ILoggedInUser, LoggedInUser>();
+        
+        _container.Instance(ConfigureConfiguration());
 
         GetType().Assembly.GetTypes()
                 .Where(type => type.IsClass)
@@ -76,6 +74,15 @@ public class Bootstrapper : BootstrapperBase
     }
 
 
+    private IConfiguration ConfigureConfiguration()
+    {
+        IConfigurationBuilder configBuilder = new ConfigurationBuilder()
+           .SetBasePath(Directory.GetCurrentDirectory())
+           .AddJsonFile("appsettings.json", false, true);
+        IConfiguration config = configBuilder.Build();
+
+        return config;
+    }
     
     protected override void OnStartup(object sender, System.Windows.StartupEventArgs e)
     {
