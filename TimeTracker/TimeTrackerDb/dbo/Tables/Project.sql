@@ -2,7 +2,7 @@
 (
 	[ProjectId] INT NOT NULL PRIMARY KEY IDENTITY, 
     [UserId] NVARCHAR(128) NOT NULL,
-    [Name] VARCHAR(75) NOT NULL, 
+    [Name] NVARCHAR(75) NOT NULL, 
     [CategoryId] INT NOT NULL, 
     [SubcategoryId] INT NULL, 
     [DateCreated] DATETIME2 NOT NULL DEFAULT GETUTCDATE(), 

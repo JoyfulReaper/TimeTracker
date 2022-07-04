@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace TimeTrackerApi.Library.Models;
-public class Subcategory
+public class ToDoList
 {
-    public int SubcategoryId { get; set; }
-    public string UserId { get; set; } = null!;
+    public int TodoListId { get; set; }
+    public int ProjectId { get; set; }
     public string Name { get; set; } = null!;
-    public int CategoryId { get; set; }
-    public DateTime DateCreated { get; set; }
 }

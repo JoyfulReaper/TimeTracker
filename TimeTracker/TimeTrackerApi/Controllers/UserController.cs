@@ -20,6 +20,7 @@ public class UserController : ControllerBase
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
     public async Task<User> GetLoggedInUser()
     {
         string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

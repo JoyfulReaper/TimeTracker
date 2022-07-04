@@ -32,6 +32,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opts =>
 builder.Services.AddScoped<IDataAccess, SqlDataAccess>();
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IUserRepo, UserRepo>();
+builder.Services.AddScoped<ISubcategoryRepo, SubcategoryRepo>();
 
 builder.Services.AddAuthentication(opts =>
 {

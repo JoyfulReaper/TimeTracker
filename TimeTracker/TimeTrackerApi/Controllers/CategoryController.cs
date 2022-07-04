@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TimeTrackerApi.Library.Models;
 using TimeTrackerApi.Library.Repositories.Interfaces;
 
@@ -17,11 +18,19 @@ public class CategoryController : ControllerBase
     {
         _category = category;
     }
-
+    
     [HttpGet]
-    public async Task<IEnumerable<Category>> GetCategories(string userId)
+    [ProducesResponseType(typeof(IEnumerable<Category>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetCategories(string userId)
     {
-        return await _category.GetCategoriesAsync(userId);
+        var categories =  await _category.GetCategoriesAsync(userId);
+        if(categories.First().UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
+        {
+            return StatusCode(StatusCodes.Status403Forbidden, new { ErrorReason = "You may only access your own categories" });
+        }
+        
+        return Ok(categories);
     }
 
     [HttpPost]

@@ -24,4 +24,8 @@
     <ProjectReference Include="..\TimeTrackerApi.Library\TimeTrackerApi.Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
 </Project>
