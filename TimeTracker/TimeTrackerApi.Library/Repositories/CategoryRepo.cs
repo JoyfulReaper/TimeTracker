@@ -24,6 +24,10 @@ public class CategoryRepo : ICategoryRepo
 
     public Task AddCategoryAsync(Category category)
     {
-        return _dataAccess.SaveDataAsync("spCategory_Insert", category, "TimeTrackerData");
+        return _dataAccess.SaveDataAsync("spCategory_Insert", new
+        {
+            UserId = category.UserId,
+            Name = category.Name
+        }, "TimeTrackerData");
     }
 }
