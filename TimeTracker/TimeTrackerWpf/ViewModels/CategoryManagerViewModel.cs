@@ -22,6 +22,8 @@ public class CategoryManagerViewModel : Screen
         _loggedInUser = loggedInUser;
     }
 
+    ////////////////////////////////// Properties ///////////////////////
+
     private string _addCategoryBox = string.Empty;
     public string AddCategoryBox
     {
@@ -43,6 +45,24 @@ public class CategoryManagerViewModel : Screen
             NotifyOfPropertyChange(() => Categories);
         }
     }
+
+    private Category _selectedCategory;
+    public Category SelectedCategory
+    {
+        get { return _selectedCategory; }
+        set { _selectedCategory = value;
+            NotifyOfPropertyChange(() => SelectedCategory);
+            NotifyOfPropertyChange(() => CanDeleteCategory);
+        }
+    }
+
+    public bool CanDeleteCategory
+    {
+        get => SelectedCategory != null;
+    }
+
+
+    ////////////////////////////////// Methods ///////////////////////
 
 
     protected override async void OnViewLoaded(object view)
@@ -70,5 +90,8 @@ public class CategoryManagerViewModel : Screen
         await LoadCategories();
     }
 
-
+    public async Task DeleteCategory()
+    {
+        throw new NotImplementedException();
+    }
 }

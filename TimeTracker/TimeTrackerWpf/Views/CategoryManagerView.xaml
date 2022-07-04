@@ -28,7 +28,8 @@
         <TextBlock Text="Category Management" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
         
         <TextBlock Text="Category:" Grid.Column="0" Grid.Row="1"/>
-        <ListBox x:Name="Categories" Grid.Column="0" Grid.Row="2" MinHeight="200" MinWidth="200" Margin="0,0,10,10">
+        <ListBox x:Name="Categories" Grid.Column="0" Grid.Row="2" MinHeight="200" MinWidth="200" Margin="0,0,10,10"
+                 SelectedItem="{Binding SelectedCategory}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
@@ -42,7 +43,8 @@
 
         <!-- Column 1 -->
         <TextBlock Text="Subcategory:" Grid.Column="1" Grid.Row="1" Margin="10,0,10,0"/>
-        <ListBox x:Name="Subcategories" Grid.Column="1" Grid.Row="2" MinHeight="200" MinWidth="200" Margin="10,0,0,10">
+        <ListBox x:Name="Subcategories" Grid.Column="1" Grid.Row="2" MinHeight="200" MinWidth="200" Margin="10,0,0,10"
+                 SelectedItem="{Binding SelectedSubcategory}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
