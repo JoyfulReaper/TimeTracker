@@ -17,4 +17,7 @@ public interface IDataAccess
     Task SaveDataInTransactionAsync<T>(string storedProcedure, T parameters);
     Task<int> SaveDataAndGetIdAsync<T>(string storedProcedure, T parameters, string connectionStringName);
     void StartTransaction(string connectionStringName);
+
+    Task<List<T>> QueryRawSql<T, U>(string sql, U parameters, string connectionStringName);
+    Task ExecuteRawSql<T>(string sql, T parameters, string connectionStringName);
 }

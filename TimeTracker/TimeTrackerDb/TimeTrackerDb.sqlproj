@@ -78,6 +78,7 @@
     <Build Include="dbo\Stored Procedures\spCategory_Insert.sql" />
     <Build Include="dbo\Stored Procedures\spSubcategoryGet.sql" />
     <Build Include="dbo\Stored Procedures\spSubcategory_Insert.sql" />
+    <Build Include="dbo\Stored Procedures\spCategory_Delete.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TimeTrackerDb.refactorlog" />

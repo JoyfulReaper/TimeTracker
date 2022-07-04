@@ -126,4 +126,23 @@ public class SqlDataAccess : IDataAccess
         _transaction = null;
         _connection = null;
     }
+
+    public async Task<List<T>> QueryRawSql<T, U>(string sql, U parameters, string connectionStringName)
+    {
+        string connectionString = GetConnectionString(connectionStringName);
+        using IDbConnection connection = new SqlConnection(connectionString);
+
+        return (await connection.QueryAsync<T>(sql, parameters,
+            commandType: CommandType.Text))
+            .ToList();
+    }
+
+    public async Task ExecuteRawSql<T>(string sql, T parameters, string connectionStringName)
+    {
+        string connectionString = GetConnectionString(connectionStringName);
+        using IDbConnection connection = new SqlConnection(connectionString);
+
+        await connection.ExecuteAsync(sql, parameters,
+            commandType: CommandType.Text);
+    }
 }

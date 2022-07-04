@@ -22,6 +22,11 @@ public class CategoryRepo : ICategoryRepo
         return _dataAccess.LoadDataAsync<Category, dynamic>("spCategory_Get", new { UserId = userId }, "TimeTrackerData");
     }
 
+    public Task<Category> GetCategory(int categoryId)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task AddCategoryAsync(Category category)
     {
         return _dataAccess.SaveDataAsync("spCategory_Insert", new
@@ -29,5 +34,16 @@ public class CategoryRepo : ICategoryRepo
             UserId = category.UserId,
             Name = category.Name
         }, "TimeTrackerData");
+    }
+
+    public async Task<int> GetProjectCount(int categoryId)
+    {
+        return (await _dataAccess.QueryRawSql<int, dynamic>("SELECT COUNT(*) FROM Project WHERE CategoryId = @CategoryId", 
+            new { CategoryId = categoryId }, "TimeTrackerData")).Single();
+    }
+
+    public Task DeleteCategoryAsync(int categoryId)
+    {
+        return _dataAccess.SaveDataAsync("spCategory_Delete", new { CategoryId = categoryId }, "TimeTrackerData");
     }
 }

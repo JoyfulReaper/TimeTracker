@@ -5,4 +5,5 @@ public interface ISubcategoryRepo
 {
     Task AddSubcategoryAsync(Subcategory subcategory);
     Task<List<Subcategory>> GetSubcategoriesAsync(int categoryId);
+    Task<int> GetProjectCount(int categoryId);
 }

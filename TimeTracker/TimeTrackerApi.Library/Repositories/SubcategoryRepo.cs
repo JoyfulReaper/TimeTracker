@@ -35,4 +35,10 @@ public class SubcategoryRepo : ISubcategoryRepo
             UserId = subcategory.UserId
         }, "TimeTrackerData");
     }
+
+    public async Task<int> GetProjectCount(int subcategoryId)
+    {
+        return (await _dataAccess.QueryRawSql<int, dynamic>("SELECT COUNT(*) FROM Subcategory WHERE SubcategoryId = @SubcategoryId",
+            new { SubcategoryId = subcategoryId }, "TimeTrackerData")).Single();
+    }
 }

@@ -5,4 +5,6 @@ public interface ICategoryRepo
 {
     Task<List<Category>> GetCategoriesAsync(string userId);
     Task AddCategoryAsync(Category category);
+    Task DeleteCategoryAsync(int categoryId);
+    Task<int> GetProjectCount(int categoryId);
 }
