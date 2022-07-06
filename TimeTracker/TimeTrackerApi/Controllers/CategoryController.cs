@@ -5,6 +5,7 @@ using System.Security.Claims;
 using TimeTrackerApi.DTOs;
 using TimeTrackerApi.Library.Models;
 using TimeTrackerApi.Library.Repositories.Interfaces;
+using TimeTrackerApi.Models;
 
 namespace TimeTrackerApi.Controllers;
 
@@ -26,14 +27,14 @@ public class CategoryController : ControllerBase
     public async Task<IActionResult> GetCategories(string userId)
     {
         var output = new List<CategoryDTO>();
-        
+
         var categories = await _category.GetCategoriesAsync(userId);
         if (categories.First().UserId != User.FindFirstValue(ClaimTypes.NameIdentifier))
         {
             return StatusCode(StatusCodes.Status403Forbidden, new { ErrorReason = "You may only access your own categories" });
         }
 
-        categories.ForEach(async (c) =>
+        foreach (var c in categories)
         {
             output.Add(new CategoryDTO
             {
@@ -43,9 +44,8 @@ public class CategoryController : ControllerBase
                 DateCreated = c.DateCreated,
                 ProjectsInCategory = await _category.GetProjectCount(c.CategoryId)
             });
-        });
-
-
+        }
+        
         return Ok(output);
     }
 
@@ -56,9 +56,16 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("{categoryId}")]
-    public async Task DeleteCategory(int categoryId)
+    public async Task<IActionResult> DeleteCategory(int categoryId)
     {
-
-        await _category.DeleteCategoryAsync(categoryId);
+        try
+        {
+            await _category.DeleteCategoryAsync(categoryId);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new ErrorResponse { ErrorMessage = ex.Message});
+        }
     }
 }

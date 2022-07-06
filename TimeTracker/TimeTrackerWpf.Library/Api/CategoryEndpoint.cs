@@ -7,6 +7,7 @@ using TimeTrackerWpf.Library.Models;
 using System.Net.Http.Json;
 
 namespace TimeTrackerWpf.Library.Api;
+
 public class CategoryEndpoint : ICategoryEndpoint
 {
     private readonly IApiClient _apiClient;
@@ -30,5 +31,23 @@ public class CategoryEndpoint : ICategoryEndpoint
     public async Task AddCategory(Category category)
     {
         await _apiClient.Client.PostAsJsonAsync("/api/category", category);
+    }
+
+    public async Task DeleteCategory(int categoryId)
+    {
+        var response = await _apiClient.Client.DeleteAsync($"/api/category/{categoryId}");
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            if (error is null)
+            {
+                error = new ErrorResponse
+                {
+                    ErrorMessage = "Unable to deserialize error message!"
+                };
+            }
+            throw new Exception(error.ErrorMessage);
+        }
     }
 }

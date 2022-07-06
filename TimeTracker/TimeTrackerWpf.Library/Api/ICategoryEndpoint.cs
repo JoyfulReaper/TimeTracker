@@ -5,4 +5,5 @@ public interface ICategoryEndpoint
 {
     Task AddCategory(Category category);
     Task<IEnumerable<Category>> GetCategories();
+    Task DeleteCategory(int categoryId);
 }

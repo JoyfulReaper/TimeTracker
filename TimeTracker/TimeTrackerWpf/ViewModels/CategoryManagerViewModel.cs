@@ -92,6 +92,14 @@ public class CategoryManagerViewModel : Screen
 
     public async Task DeleteCategory()
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _categoryEndpoint.DeleteCategory(SelectedCategory.CategoryId);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        await LoadCategories();
     }
 }
